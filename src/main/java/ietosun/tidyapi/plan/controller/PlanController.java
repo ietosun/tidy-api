@@ -4,22 +4,28 @@ import ietosun.tidyapi.plan.entity.Plan;
 import ietosun.tidyapi.plan.service.PlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("api/v1/plans")
 @Controller
 public class PlanController {
 
     private final PlanService planService;
 
-    @GetMapping("api/v1/plans")
+    @GetMapping
     @ResponseBody
     public List<Plan> list() {
         return this.planService.getList();
+    }
+
+    @GetMapping("/{id}")
+    @ResponseBody
+    public Plan getPlan(@PathVariable Long id) {
+        return this.planService.getPlanById(id)
+                .orElseThrow(() -> new RuntimeException("Plan not found"));
     }
 }
