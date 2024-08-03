@@ -28,4 +28,10 @@ public class PlanController {
         return this.planService.getPlanById(id)
                 .orElseThrow(() -> new RuntimeException("Plan not found"));
     }
+
+    @PostMapping
+    @ResponseBody
+    public Plan createPlan(@RequestBody Plan plan, @RequestParam Long userId) {
+        return this.planService.createPlan(plan, userId);
+    }
 }

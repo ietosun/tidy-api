@@ -61,4 +61,8 @@ public class Plan {
     public void preUpdate() {
         this.modifyDate = LocalDateTime.now();
     }
+
+    public void assignUser(User user) {
+        this.user = user;
+    }
 }
