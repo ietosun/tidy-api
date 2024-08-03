@@ -7,6 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum LoginType {
 
-    Naver(), Kakao();
+    NAVER(), KAKAO();
 
 }
