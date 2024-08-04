@@ -1,10 +1,14 @@
 package ietosun.tidyapi.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import ietosun.tidyapi.plan.entity.Plan;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -39,4 +43,8 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private LoginType loginType;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Plan> planList;
 }
