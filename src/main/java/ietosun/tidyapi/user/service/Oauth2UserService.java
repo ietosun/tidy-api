@@ -7,6 +7,7 @@ import ietosun.tidyapi.user.entity.LoginType;
 import ietosun.tidyapi.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -15,7 +16,9 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Locale;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,18 +32,22 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String registrationId = userRequest.getClientRegistration().getRegistrationId().toUpperCase(Locale.ROOT);
         LoginType loginType = LoginType.valueOf(registrationId);
-
         return userRepository.findByCodeAndLoginType(oAuth2User.getName(), loginType)
                 .map(this::processExistingUser)
                 .orElseGet(() -> processNewUser(loginType, oAuth2User));
     }
 
-    private OAuth2User processExistingUser(User user) {
+    public User findById(int id) {
+        return userRepository.findById(id).orElseThrow(() -> new BadCredentialsException("Not Found User: " + id));
+    }
+
+    private CustomUserDetail processExistingUser(User user) {
+
         validateUser(user);
         return CustomUserDetail.fromUser(user);
     }
 
-    private OAuth2User processNewUser(LoginType loginType, OAuth2User oAuth2User) {
+    private CustomUserDetail processNewUser(LoginType loginType, OAuth2User oAuth2User) {
         return CustomUserDetail.fromUser(joinOauth2User(loginType, oAuth2User));
     }
 
@@ -48,11 +55,13 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
         User newUser = User.builder()
                 .bannedState(false)
                 .joinState(true)
+                .nickname(loginType.name() + "_" + System.currentTimeMillis())
                 .code(oAuth2User.getName())
                 .grade(Grade.ROLE_GENERAL)
                 .loginType(loginType)
                 .build();
         userRepository.save(newUser);
+
         return newUser;
     }
 
