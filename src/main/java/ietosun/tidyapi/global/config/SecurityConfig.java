@@ -1,5 +1,6 @@
 package ietosun.tidyapi.global.config;
 
+import ietosun.tidyapi.security.JwtLoginSuccessHandler;
 import ietosun.tidyapi.user.service.Oauth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,33 +22,17 @@ public class SecurityConfig  {
 
     private final Oauth2UserService oauth2UserService;
 
+    private final JwtLoginSuccessHandler jwtLoginSuccessHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return
             http
                     .authorizeHttpRequests(authorize -> authorize.requestMatchers("/**").permitAll())
                     .oauth2Login((httpSecurityOAuth2LoginConfigurer -> httpSecurityOAuth2LoginConfigurer
-                            .successHandler(successHandler())
+                            .successHandler(jwtLoginSuccessHandler)
                             .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oauth2UserService))))
                     .build();
     }
 
-    @Bean
-    public AuthenticationSuccessHandler successHandler() {
-        return ((request, response, authentication) -> {
-            DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
-
-            String id = defaultOAuth2User.getAttributes().get("id").toString();
-            String body = """
-                    {"id":"%s"}
-                    """.formatted(id);
-
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-
-            PrintWriter writer = response.getWriter();
-            writer.println(body);
-            writer.flush();
-        });
-    }
 }

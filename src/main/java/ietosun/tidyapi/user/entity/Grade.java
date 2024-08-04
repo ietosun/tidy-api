@@ -1,5 +1,5 @@
 package ietosun.tidyapi.user.entity;
 
 public enum Grade {
-    Admin, General
+    ROLE_ADMIN, ROLE_GENERAL
 }
