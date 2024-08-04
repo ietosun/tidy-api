@@ -1,11 +1,16 @@
 package ietosun.tidyapi.user.entity;
 
+
 import ietosun.tidyapi.global.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import ietosun.tidyapi.plan.entity.Plan;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -46,5 +51,9 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "login_type", nullable = false)
     private LoginType loginType;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Plan> planList;
 
 }
