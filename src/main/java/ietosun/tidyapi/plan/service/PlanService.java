@@ -36,4 +36,11 @@ public class PlanService {
     public Plan updatePlan(Plan updatePlan) {
         return this.planRepository.save(updatePlan);
     }
+
+    public void deletePlan(Long id) {
+        Optional<Plan> planOptional = planRepository.findById(id);
+        planOptional.ifPresent(plan -> {
+            planRepository.delete(plan); // 논리 삭제 처리
+        });
+    }
 }

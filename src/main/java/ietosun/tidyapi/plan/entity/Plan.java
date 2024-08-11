@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table
+@SQLDelete(sql = "UPDATE plan SET disclosure = true WHERE plan_id = ?")
+@Where(clause = "disclosure = false")
 public class Plan {
 
     @Id

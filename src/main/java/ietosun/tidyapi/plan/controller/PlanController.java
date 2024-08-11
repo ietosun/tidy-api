@@ -4,6 +4,7 @@ import ietosun.tidyapi.plan.dto.PlanUpdateDTO;
 import ietosun.tidyapi.plan.entity.Plan;
 import ietosun.tidyapi.plan.service.PlanService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,5 +58,11 @@ public class PlanController {
                     return planService.updatePlan(updatePlan);
                 })
                 .orElseThrow(() -> new RuntimeException("Plan not found"));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePlan(@PathVariable Long id) {
+        planService.deletePlan(id);
+        return ResponseEntity.noContent().build(); // 204 No Content 응답
     }
 }
