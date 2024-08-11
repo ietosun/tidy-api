@@ -32,4 +32,8 @@ public class PlanService {
                 })
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
+
+    public Plan updatePlan(Plan updatePlan) {
+        return this.planRepository.save(updatePlan);
+    }
 }
